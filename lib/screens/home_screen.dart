@@ -65,12 +65,14 @@ class _HomeScreenState extends State<HomeScreen> {
       prizepool: '10',
       entryfees: '220',
       category: 'Gaming',
+      contestStatus: 'live',
     ),
     ConstestWidget(
       image: AssetImage('assets/images/finance.jpg'),
       prizepool: '50',
       entryfees: '100',
       category: 'Finance',
+      contestStatus: 'live',
     ),
   ];
 

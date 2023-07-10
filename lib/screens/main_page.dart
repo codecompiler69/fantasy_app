@@ -15,7 +15,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int currentScreen = 0;
-  final List<Widget> screens = [
+  final List<Widget> screens = const [
     HomeScreen(),
     MyMatches(),
     ChatPage(),
@@ -45,7 +45,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
+      body: Stack(
         children: [screens[currentScreen]],
       ),
       bottomNavigationBar: BottomNavigationBar(

@@ -9,6 +9,7 @@ class ConstestWidget extends StatefulWidget {
   final ImageProvider<Object> image;
   final String entryfees;
   final String category;
+  final String contestStatus;
 
   const ConstestWidget({
     Key? key,
@@ -16,6 +17,7 @@ class ConstestWidget extends StatefulWidget {
     required this.prizepool,
     required this.entryfees,
     required this.category,
+    required this.contestStatus,
   }) : super(key: key);
 
   @override
