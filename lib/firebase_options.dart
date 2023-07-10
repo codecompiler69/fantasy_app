@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCHUF8d8-K7J2HgDFK5nBWfq7B0lpM4rfA',
-    appId: '1:877010609566:android:680b39f08bee81a92aa28f',
-    messagingSenderId: '877010609566',
-    projectId: 'influencer-fantasy',
-    storageBucket: 'influencer-fantasy.appspot.com',
+    apiKey: 'AIzaSyC1bzHsTF3Ldj2l3iyjRU8fPlWCoidMykA',
+    appId: '1:1070086349947:android:038b0e43425c4d1f0aaede',
+    messagingSenderId: '1070086349947',
+    projectId: 'mvp-app-fdad4',
+    storageBucket: 'mvp-app-fdad4.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD9BVzEnZvKyGadIKDNp1VD4msq4N8082E',
-    appId: '1:877010609566:ios:5426573148434e242aa28f',
-    messagingSenderId: '877010609566',
-    projectId: 'influencer-fantasy',
-    storageBucket: 'influencer-fantasy.appspot.com',
-    iosClientId: '877010609566-nurk9qj3qnsaqru5fseo8fap12rl643j.apps.googleusercontent.com',
+    apiKey: 'AIzaSyB2WMb-qXtV0FQizvnl4DI1IvLsDv5lfvU',
+    appId: '1:1070086349947:ios:6957eed64fa38a9c0aaede',
+    messagingSenderId: '1070086349947',
+    projectId: 'mvp-app-fdad4',
+    storageBucket: 'mvp-app-fdad4.appspot.com',
+    iosClientId: '1070086349947-g9qj0rqahe7v5v6m2cqbm3b3lbdl8kfm.apps.googleusercontent.com',
     iosBundleId: 'com.example.fantasyapp',
   );
 }
