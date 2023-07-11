@@ -53,7 +53,7 @@ class _MainPageState extends State<MainPage> {
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.black,
+        selectedItemColor: Colors.deepPurple,
         currentIndex: currentScreen,
         onTap: onTap,
         items: List.generate(icons.length, (index) {
