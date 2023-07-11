@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -7,7 +6,7 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
@@ -17,7 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
+      initialDate: selectedDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
@@ -30,12 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  @override
-  void dispose() {
-    dateController.dispose();
-    super.dispose();
-  }
-
+  
   late TextEditingController _usernameController;
   bool _isEditingEnabled = false;
 
@@ -48,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void dispose() {
+    dateController.dispose();
     _usernameController.dispose();
     super.dispose();
   }
@@ -102,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Column(
                     children: [
                       Text(
-                        'Sarthak Gandekar',
+                        'Andrew Tate',
                         style: TextStyle(fontWeight: FontWeight.w800),
                         textScaleFactor: 1.25,
                       ),
@@ -151,13 +146,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 endIndent: 40,
                 thickness: 0.6,
               ),
-              ListTile(
+              const ListTile(
                 leading: Icon(Icons.email),
-                title: const Text(
+                title: Text(
                   'Email',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                subtitle: const Text(
+                subtitle: Text(
                   'email',
                   style: TextStyle(fontSize: 18),
                 ),
@@ -168,13 +163,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 endIndent: 40,
                 thickness: 0.6,
               ),
-              ListTile(
+              const ListTile(
                 leading: Icon(Icons.phone_android_outlined),
-                title: const Text(
+                title: Text(
                   'Phone number',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                subtitle: const Text(
+                subtitle: Text(
                   'phone no',
                   style: TextStyle(fontSize: 18),
                 ),
