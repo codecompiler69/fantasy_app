@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _usernameController = TextEditingController();
-    _usernameController.text = 'Initial Username'; // Set the initial username here
+    _usernameController.text = 'Initial Username'; 
   }
 
   @override
@@ -51,7 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _isEditingEnabled = !_isEditingEnabled;
       if (!_isEditingEnabled) {
-        // Perform your logic to save the entered username here
+        
         String newUsername = _usernameController.text;
         print('New Username: $newUsername');
       }
