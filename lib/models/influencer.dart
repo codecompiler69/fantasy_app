@@ -57,7 +57,7 @@ List<Influencer> influencers = [
     followerCount: 1500000,
     engagementRate: 3.8,
     creditPoints: 2.5,
-    niche: 'Fashion',
+    niche: 'Fashion ',
   ),
   Influencer(
     name: 'Foodie Delights',

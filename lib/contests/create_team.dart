@@ -44,7 +44,7 @@ class _CreateTeamState extends State<CreateTeam> {
                 selectedInfluencers.add(influencer);
                 availableCredits -= influencer.creditPoints;
               } else {
-                // Show a message or disable selection if not enough credits are available
+                
               }
             }
           });
@@ -55,7 +55,7 @@ class _CreateTeamState extends State<CreateTeam> {
 
   void moveToTeamManagement() {
     if (selectedInfluencers.isNotEmpty) {
-      // Navigate to the team management screen
+      
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -65,7 +65,7 @@ class _CreateTeamState extends State<CreateTeam> {
         ),
       );
     } else {
-      // Show a message or disable the button if no influencers are selected
+     
     }
   }
 

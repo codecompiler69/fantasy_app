@@ -14,7 +14,7 @@ class _ContestInfoState extends State<ContestInfo> {
   bool termsAndConditionsAccepted = false;
 
   final List<String> rules = [
-    'Overview',
+    'Overview ',
     'Join the Influencer Showdown and build your dream team of Instagram influencers to compete for the highest engagement rate. The team with the most likes, comments, and shares wins exciting prizes!',
     'Team Creation',
     'Each user can create a team of 5 Instagram influencers to represent them in the contest.',
