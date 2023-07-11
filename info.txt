@@ -1,0 +1,43 @@
+Detailed description of the UI for the contest details screen in your app:
+
+1. Contest Details Section:
+   - At the top of the screen, display the contest's title, duration, and any specific requirements or restrictions in a visually appealing manner. You can use a large, bold font to make the title stand out.
+   - Below the title, provide a concise overview of the contest, including a brief description of the contest's purpose, rules, and any key information that users need to know.
+   - If applicable, include a countdown timer to indicate the remaining time until the contest ends.
+
+2. Influencer Selection Section:
+   - Dedicate a section to allow users to browse and search through a list of available Instagram influencers who can participate in the contest.
+   - Display influencer profiles as cards or tiles, including their profile pictures, usernames, and relevant statistics such as follower count or engagement rate. This information can help users make informed decisions when selecting influencers for their team.
+   - Implement search functionality, allowing users to search for specific influencers based on their usernames, niche, or other relevant filters.
+   - Provide sorting or filtering options to help users narrow down their search based on criteria like follower count, engagement rate, or niche.
+
+3. Team Creation Section:
+   - Enable users to create their teams for the contest within this section.
+   - Display a predetermined number of slots or checkboxes where users can select influencers to include in their team.
+   - Implement options such as a search bar, filters, or categories to assist users in finding specific influencers they want to include in their team.
+   - Provide a preview of the selected influencers, allowing users to see their choices at a glance.
+
+4. Influencer Profiles Section:
+   - Include a section where users can access more detailed information about each influencer.
+   - When a user clicks on an influencer's profile picture or username, display a dedicated screen or a modal window that showcases the influencer's bio, recent posts, engagement metrics, and past contest performances.
+   - Allow users to navigate back to the contest details screen easily.
+
+5. Team Management Section:
+   - Create a section that allows users to view and manage their created teams for the contest.
+   - Display the selected influencers in a visually appealing format, showcasing their profile pictures and usernames.
+   - Enable users to add or remove influencers from their team using intuitive controls like "+" and "-" buttons or drag-and-drop functionality.
+   - Include an option to change the team name and make modifications until the contest entry deadline.
+
+6. Contest Rankings Section:
+   - Provide a section to display real-time or periodically updated rankings of all participating teams in the contest.
+   - Show the current position of the user's team, along with the points earned and any progress or updates related to the contest.
+   - Implement interactive elements, such as the ability to view the leaderboard, switch between different contest rankings (if applicable), and see other users' team details.
+
+7. Social Sharing and Engagement Section:
+   - Incorporate social sharing features to encourage users to share their team selections, contest participation, or their current rankings on social media platforms.
+   - Include social media icons or buttons to facilitate one-click sharing to popular platforms like Instagram, Facebook, or Twitter.
+   - Implement engagement features such as liking or commenting on other users' teams, fostering a sense of community within the app.
+
+8. Notifications and Reminders:
+   - Integrate push notifications or email alerts to keep users informed about contest updates, team performance, upcoming deadlines, and any other relevant information they might need to know.
+   - Provide a section or a settings page where users can manage their notification preferences, such as opting in or out of specific types of notifications.

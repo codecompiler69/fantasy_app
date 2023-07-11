@@ -1,16 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:fantasyapp/widgets/app_text.dart';
-import 'package:flutter/material.dart';
-
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
@@ -41,16 +38,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
   late TextEditingController _usernameController;
   bool _isEditingEnabled = false;
+
   @override
   void initState() {
     super.initState();
     _usernameController = TextEditingController();
-    _usernameController.text =
-        'Initial Username'; // Set the initial username here
+    _usernameController.text = 'Initial Username'; // Set the initial username here
   }
 
   @override
-  void dispose1() {
+  void dispose() {
     _usernameController.dispose();
     super.dispose();
   }
@@ -72,7 +69,10 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 176, 144, 229),
-          title: const AppText(text: 'My Profile', fontWeight: FontWeight.w800),
+          title: const Text(
+            'My Profile',
+            style: TextStyle(fontWeight: FontWeight.w800),
+          ),
           leading: const Icon(Icons.arrow_back_sharp),
           actions: [const Icon(Icons.edit_note)],
           centerTitle: true,
@@ -81,66 +81,57 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 70,
-              ),
+              const SizedBox(height: 70),
               Row(
                 children: [
-                  const SizedBox(
-                    width: 30,
-                  ),
+                  const SizedBox(width: 30),
                   Container(
-                    // padding: EdgeInsetsDirectional.only(start: 40),
                     height: 90,
                     width: 90,
                     decoration: const BoxDecoration(shape: BoxShape.circle),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
                       child: const Image(
-                          image: NetworkImage(
-                              "https://pps.whatsapp.net/v/t61.24694-24/319929991_1197153464280348_9111461515577510123_n.jpg?ccb=11-4&oh=01_AdRxwpFyYkszPWgz2Fid74g2ECpLiy5rVeJHTzgTSwgm-g&oe=64B43776")),
+                        image: NetworkImage(
+                          "https://pps.whatsapp.net/v/t61.24694-24/319929991_1197153464280348_9111461515577510123_n.jpg?ccb=11-4&oh=01_AdRxwpFyYkszPWgz2Fid74g2ECpLiy5rVeJHTzgTSwgm-g&oe=64B43776",
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 30,
-                  ),
+                  const SizedBox(width: 30),
                   const Column(
                     children: [
-                      AppText(
-                        text: 'Sarthak Gandekar',
-                        fontWeight: FontWeight.w800,
-                        size: 20,
+                      Text(
+                        'Sarthak Gandekar',
+                        style: TextStyle(fontWeight: FontWeight.w800),
+                        textScaleFactor: 1.25,
                       ),
-                      // SizedBox(
-                      //   height: 25,
-                      // )
                     ],
                   )
                 ],
               ),
-              const SizedBox(
-                height: 40,
-              ),
+              const SizedBox(height: 40),
               ClipRRect(
                 borderRadius: BorderRadius.circular(30),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 7),
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1.5),
-                      borderRadius: BorderRadius.circular(30)),
-                  child: const AppText(
-                    text: 'Personal Information',
-                    fontWeight: FontWeight.w700,
+                    border: Border.all(color: Colors.black, width: 1.5),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: const Text(
+                    'Personal Information',
+                    style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               ListTile(
                 leading: const Icon(Icons.person_pin_circle),
-                title: const AppText(
-                    text: 'Username', size: 12, color: Colors.grey),
+                title: const Text(
+                  'Username',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
                 subtitle: TextField(
                   style: const TextStyle(color: Colors.black),
                   enabled: _isEditingEnabled,
@@ -162,10 +153,13 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 leading: Icon(Icons.email),
-                title: AppText(text: 'Email', size: 12, color: Colors.grey),
-                subtitle: AppText(
-                  text: 'email',
-                  size: 18,
+                title: const Text(
+                  'Email',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                subtitle: const Text(
+                  'email',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
               const Divider(
@@ -176,11 +170,13 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 leading: Icon(Icons.phone_android_outlined),
-                title:
-                    AppText(text: 'Phone number', size: 12, color: Colors.grey),
-                subtitle: AppText(
-                  text: 'phone no',
-                  size: 18,
+                title: const Text(
+                  'Phone number',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                subtitle: const Text(
+                  'phone no',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
               const Divider(
@@ -191,8 +187,10 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.calendar_today),
-                title: const AppText(
-                    text: 'Date Of Birth', size: 12, color: Colors.grey),
+                title: const Text(
+                  'Date Of Birth',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
                 subtitle: InkWell(
                   onTap: () {
                     _selectDate(context);
