@@ -58,7 +58,7 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
               onPressed: () {
                 // Handle team modification logic
               },
-              child: const Text('Save Changes'),
+              child: const Text('Save Changes '),
             ),
           ),
         ],
