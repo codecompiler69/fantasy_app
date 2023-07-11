@@ -1,7 +1,6 @@
-import '../widgets/bottom_nav_bar.dart';
 import 'my_matches.dart';
 import 'profile_page.dart';
-import 'package:fantasyapp/screens/something.dart';
+import 'package:fantasyapp/screens/chat.dart';
 
 import 'package:fantasyapp/widgets/category_container.dart';
 import 'package:fantasyapp/widgets/contest_widget.dart';
@@ -23,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> screens = const [
     HomeScreen(),
     MyMatches(),
-    Something(),
+    ChatPage(),
     ProfilePage(),
   ];
 
@@ -66,12 +65,14 @@ class _HomeScreenState extends State<HomeScreen> {
       prizepool: '10',
       entryfees: '220',
       category: 'Gaming',
+      contestStatus: 'live',
     ),
     ConstestWidget(
       image: AssetImage('assets/images/finance.jpg'),
       prizepool: '50',
       entryfees: '100',
       category: 'Finance',
+      contestStatus: 'live',
     ),
   ];
 
@@ -160,7 +161,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          bottomNavigationBar: const BottomNavBar(),
         ),
       ),
     );

@@ -1,4 +1,4 @@
-import 'package:fantasyapp/screens/something.dart';
+import 'package:fantasyapp/screens/chat.dart';
 
 import 'package:flutter/material.dart';
 
@@ -15,10 +15,10 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int currentScreen = 0;
-  final List<Widget> screens = [
+  final List<Widget> screens = const [
     HomeScreen(),
     MyMatches(),
-    Something(),
+    ChatPage(),
     ProfilePage(),
   ];
 
@@ -45,13 +45,15 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: screens[currentScreen],
+      body: Stack(
+        children: [screens[currentScreen]],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: true,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.black,
+        selectedItemColor: Colors.deepPurple,
         currentIndex: currentScreen,
         onTap: onTap,
         items: List.generate(icons.length, (index) {

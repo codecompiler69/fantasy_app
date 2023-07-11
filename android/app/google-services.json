@@ -1,41 +1,34 @@
 {
   "project_info": {
-    "project_number": "877010609566",
-    "project_id": "influencer-fantasy",
-    "storage_bucket": "influencer-fantasy.appspot.com"
+    "project_number": "1070086349947",
+    "project_id": "mvp-app-fdad4",
+    "storage_bucket": "mvp-app-fdad4.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:877010609566:android:680b39f08bee81a92aa28f",
+        "mobilesdk_app_id": "1:1070086349947:android:038b0e43425c4d1f0aaede",
         "android_client_info": {
           "package_name": "com.example.fantasyapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "877010609566-2ss3jd7j92k1sdbv7kp52g8rl6hm4djk.apps.googleusercontent.com",
+          "client_id": "1070086349947-26kqf2o74jgekee4k9p3laktvc9de5o9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCHUF8d8-K7J2HgDFK5nBWfq7B0lpM4rfA"
+          "current_key": "AIzaSyC1bzHsTF3Ldj2l3iyjRU8fPlWCoidMykA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "877010609566-2ss3jd7j92k1sdbv7kp52g8rl6hm4djk.apps.googleusercontent.com",
+              "client_id": "1070086349947-26kqf2o74jgekee4k9p3laktvc9de5o9.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "877010609566-1nfc3m3u5nnjcd5nhdfrufut5c3vks76.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.fantasyApp"
-              }
             }
           ]
         }
