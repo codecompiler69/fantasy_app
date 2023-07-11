@@ -1,5 +1,5 @@
-import 'package:fantasyapp/screens/welcome_screen.dart';
 import 'package:fantasyapp/screens/home_screen.dart';
+import 'package:fantasyapp/screens/welcome_screen.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ class CheckForSignIn extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return  HomeScreen();
+            return const HomeScreen();
           } else {
             return const WelcomeScreen();
           }
