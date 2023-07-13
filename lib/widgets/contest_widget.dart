@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:fantasyapp/widgets/app_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class ConstestWidget extends StatefulWidget {
   final String prizepool;
@@ -10,6 +9,7 @@ class ConstestWidget extends StatefulWidget {
   final String entryfees;
   final String category;
   final String contestStatus;
+  
 
   const ConstestWidget({
     Key? key,
@@ -18,6 +18,7 @@ class ConstestWidget extends StatefulWidget {
     required this.entryfees,
     required this.category,
     required this.contestStatus,
+   
   }) : super(key: key);
 
   @override
@@ -27,16 +28,14 @@ class ConstestWidget extends StatefulWidget {
 class _ConstestWidgetState extends State<ConstestWidget> {
   bool _timerRunning = false;
   late Timer _timer;
-  int _totalSeconds = 10; // Set timer 
+  int _totalSeconds = 10;
 
   SharedPreferences? _preferences;
-  FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
     super.initState();
     initializePreferences();
-    initializeNotifications();
   }
 
   void initializePreferences() async {
@@ -44,15 +43,6 @@ class _ConstestWidgetState extends State<ConstestWidget> {
     setState(() {
       _totalSeconds = _preferences!.getInt('timerDuration') ?? _totalSeconds;
     });
-  }
-
-  void initializeNotifications() {
-    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-    _flutterLocalNotificationsPlugin!.initialize(initializationSettings);
   }
 
   @override
@@ -70,7 +60,6 @@ class _ConstestWidgetState extends State<ConstestWidget> {
         } else {
           _timerRunning = false;
           stopCountdownTimer();
-          showNotification();
         }
       });
     });
@@ -79,25 +68,6 @@ class _ConstestWidgetState extends State<ConstestWidget> {
   void stopCountdownTimer() {
     _timer.cancel();
     _preferences!.remove('timerDuration');
-  }
-
-  Future<void> showNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
-      channelDescription: 'Your channel description',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await _flutterLocalNotificationsPlugin!.show(
-      0,
-      'Timer Expired',
-      'The timer has finished',
-      platformChannelSpecifics,
-    );
   }
 
   @override

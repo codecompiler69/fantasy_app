@@ -181,6 +181,13 @@ class _SignUpState extends State<SignUp> {
                       ),
                       onPressed: () {
                         _formKey.currentState!.validate() ? signUp() : null;
+                        FirebaseAuth.instance.authStateChanges();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: ((context) => const SignIn()),
+                          ),
+                        );
                       },
                       child: const AppText(
                         text: 'Sign Up',
