@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fantasyapp/screens/main_page.dart';
 import 'package:fantasyapp/screens/sign_in.dart';
 import 'package:fantasyapp/widgets/app_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,12 +26,21 @@ class _SignUpState extends State<SignUp> {
 
   String selectedGender = '';
 
-  Future signUp() async {
+  void signUp() {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _email.text.trim(),
-        password: _password.text.trim(),
-      );
+      FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _email.text.trim(),
+            password: _password.text.trim(),
+          )
+          .then(
+            (value) => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: ((context) => const MainPage()),
+              ),
+            ),
+          );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -181,7 +191,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                       onPressed: () {
                         _formKey.currentState!.validate() ? signUp() : null;
-                        FirebaseAuth.instance.authStateChanges();
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(

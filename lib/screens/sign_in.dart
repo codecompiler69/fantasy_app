@@ -23,20 +23,23 @@ class _SignInState extends State<SignIn> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isSignedIn = false;
 
-  Future<void> signIn() async {
+  void signIn() {
     try {
-      final UserCredential userCredential =
-          await _auth.signInWithEmailAndPassword(
-        email: _emailcontroller.text,
-        password: _passwordcontroller.text,
-      );
+      final UserCredential userCredential = _auth
+          .signInWithEmailAndPassword(
+            email: _emailcontroller.text,
+            password: _passwordcontroller.text,
+          )
+          .then(
+            (value) => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MainPage(),
+              ),
+            ),
+          ) as UserCredential;
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MainPage(),
-        ),
-      );
+
       print('Sign-in successful');
       print('User ID: ${userCredential.user?.uid}');
     } catch (e) {

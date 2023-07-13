@@ -1,3 +1,4 @@
+import 'package:fantasyapp/contests/contest_info.dart';
 
 import 'my_matches.dart';
 import 'profile_page.dart';
@@ -62,14 +63,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<ConstestWidget> allContestWidgets = const [
     ConstestWidget(
-      image:  AssetImage('assets/images/gaming.webp'),
+      image: AssetImage('assets/images/gaming.webp'),
       prizepool: '10',
       entryfees: '220',
       category: 'Gaming',
       contestStatus: 'live',
     ),
     ConstestWidget(
-      image:  AssetImage('assets/images/finance.jpg'),
+      image: AssetImage('assets/images/finance.jpg'),
       prizepool: '50',
       entryfees: '100',
       category: 'Finance',
@@ -156,7 +157,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView.builder(
                   itemCount: filteredContestWidgets.length,
                   itemBuilder: (context, index) {
-                    return filteredContestWidgets[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ContestInfo(),
+                          ),
+                        );
+                      },
+                      child: filteredContestWidgets[index],
+                    );
                   },
                 ),
               ),
