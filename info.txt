@@ -40,4 +40,4 @@ Detailed description of the UI for the contest details screen in your app:
 
 8. Notifications and Reminders:
    - Integrate push notifications or email alerts to keep users informed about contest updates, team performance, upcoming deadlines, and any other relevant information they might need to know.
-   - Provide a section or a settings page where users can manage their notification preferences, such as opting in or out of specific types of notifications.
+   - Provide a section or a settings page where users can manage thei notification preferences, such as opting in or out of specific types of notifications.
