@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -10,50 +11,76 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late DateTime selectedDate;
-  TextEditingController dateController = TextEditingController();
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-        dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
-      });
-    }
-  }
-
-  
-  late TextEditingController _usernameController;
+  late DateTime _selectedDate;
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  String _username = '';
+  String _email = '';
+  String _phoneNumber = '';
   bool _isEditingEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    _usernameController = TextEditingController();
-    _usernameController.text = 'Initial Username'; 
+    _selectedDate = DateTime.now();
+    _fetchUserData();
   }
 
   @override
   void dispose() {
-    dateController.dispose();
+    _dateController.dispose();
     _usernameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final userData = await userDoc.get();
+      setState(() {
+        _username = userData.get('username') ?? '';
+        _email = userData.get('email') ?? '';
+        _phoneNumber = userData.get('phone_number') ?? '';
+        _usernameController.text = _username;
+        _dateController.text = DateFormat('dd-MM-yyyy').format(_selectedDate);
+      });
+    }
+  }
+
+  Future<void> _updateUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      await userDoc.update({
+        'username': _usernameController.text,
+        'dateOfBirth': _selectedDate,
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        _dateController.text = DateFormat('dd-MM-yyyy').format(_selectedDate);
+      });
+    }
   }
 
   void _toggleEditing() {
     setState(() {
       _isEditingEnabled = !_isEditingEnabled;
       if (!_isEditingEnabled) {
-        
-        String newUsername = _usernameController.text;
-        print('New Username: $newUsername');
+        _username = _usernameController.text;
+        _updateUserData();
       }
     });
   }
@@ -69,7 +96,6 @@ class _ProfilePageState extends State<ProfilePage> {
             style: TextStyle(fontWeight: FontWeight.w800),
           ),
           leading: const Icon(Icons.arrow_back_sharp),
-          actions: [const Icon(Icons.edit_note)],
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -102,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         textScaleFactor: 1.25,
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 40),
@@ -132,6 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   enabled: _isEditingEnabled,
                   controller: _usernameController,
                   decoration: const InputDecoration(
+                    border: InputBorder.none,
                     hintText: 'Enter username',
                   ),
                 ),
@@ -146,15 +173,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 endIndent: 40,
                 thickness: 0.6,
               ),
-              const ListTile(
-                leading: Icon(Icons.email),
-                title: Text(
+              ListTile(
+                leading: const Icon(Icons.email),
+                title: const Text(
                   'Email',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 subtitle: Text(
-                  'email',
-                  style: TextStyle(fontSize: 18),
+                  _email,
+                  style: const TextStyle(fontSize: 18),
                 ),
               ),
               const Divider(
@@ -163,15 +190,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 endIndent: 40,
                 thickness: 0.6,
               ),
-              const ListTile(
-                leading: Icon(Icons.phone_android_outlined),
-                title: Text(
+              ListTile(
+                leading: const Icon(Icons.phone_android_outlined),
+                title: const Text(
                   'Phone number',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 subtitle: Text(
-                  'phone no',
-                  style: TextStyle(fontSize: 18),
+                  _phoneNumber,
+                  style: const TextStyle(fontSize: 18),
                 ),
               ),
               const Divider(
@@ -186,13 +213,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   'Date Of Birth',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                subtitle: InkWell(
+                subtitle: GestureDetector(
                   onTap: () {
                     _selectDate(context);
                   },
                   child: TextFormField(
-                    controller: dateController,
-                    enabled: false,
+                    controller: _dateController,
+                    enabled: true,
                     decoration: const InputDecoration(
                       hintText: 'Select date',
                       hintStyle: TextStyle(fontSize: 18),

@@ -1,3 +1,4 @@
+
 import 'my_matches.dart';
 import 'profile_page.dart';
 import 'package:fantasyapp/screens/chat.dart';
@@ -61,14 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<ConstestWidget> allContestWidgets = const [
     ConstestWidget(
-      image: AssetImage('assets/images/gaming.webp'),
+      image:  AssetImage('assets/images/gaming.webp'),
       prizepool: '10',
       entryfees: '220',
       category: 'Gaming',
       contestStatus: 'live',
     ),
     ConstestWidget(
-      image: AssetImage('assets/images/finance.jpg'),
+      image:  AssetImage('assets/images/finance.jpg'),
       prizepool: '50',
       entryfees: '100',
       category: 'Finance',
