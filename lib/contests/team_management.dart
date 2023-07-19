@@ -1,3 +1,6 @@
+import 'package:fantasyapp/screens/home_screen.dart';
+import 'package:fantasyapp/screens/main_page.dart';
+import 'package:fantasyapp/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 
 import '../models/influencer.dart';
@@ -56,7 +59,24 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: AppText(text: 'Thankyou for registering'),
+                          content: Image(
+                              image:
+                                  AssetImage('assets/images/icons8-tick.gif')),
+                          actions: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MainPage()));
+                                },
+                                child: AppText(text: "Ok"))
+                          ],
+                        ));
               },
               child: const Text('Save Changes '),
             ),

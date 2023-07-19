@@ -95,6 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: DefaultTabController(
         length: 3,
         child: Scaffold(
+          drawer: Drawer(),
           appBar: AppBar(
             backgroundColor: const Color.fromARGB(255, 176, 144, 229),
             title: const AppText(
