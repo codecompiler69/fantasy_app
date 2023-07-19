@@ -1,53 +1,67 @@
-import 'package:fantasyapp/contests/team_management.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import '../models/influencer.dart';
 import '../widgets/app_text.dart';
+import '../contests/team_management.dart';
 
 class CreateTeam extends StatefulWidget {
-  const CreateTeam({Key? key}) : super(key: key);
+  final Map<String, dynamic> contestData;
+  const CreateTeam({Key? key, required this.contestData}) : super(key: key);
 
   @override
   State<CreateTeam> createState() => _CreateTeamState();
 }
 
 class _CreateTeamState extends State<CreateTeam> {
-  List<Influencer> selectedInfluencers = [];
+  List<String> selectedInfluencers = [];
   double availableCredits = 10.0;
 
   Widget buildInfluencerCard(Influencer influencer) {
-    bool isSelected = selectedInfluencers.contains(influencer);
+    bool isSelected = selectedInfluencers.contains(influencer.username);
 
-    return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: AssetImage(influencer.profilePicture),
-        ),
-        title: Text(influencer.username),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Followers: ${influencer.followerCount}'),
-            Text('Engagement Rate: ${influencer.engagementRate}%'),
-            Text('Credit Value: ${influencer.creditPoints}'),
-          ],
-        ),
-        trailing:
-            Icon(isSelected ? Icons.check_box : Icons.check_box_outline_blank),
-        onTap: () {
+    return GestureDetector(
+      onTap: () {
+        if (isSelected) {
           setState(() {
-            if (isSelected) {
-              selectedInfluencers.remove(influencer);
-              availableCredits += influencer.creditPoints;
-            } else {
-              if (availableCredits >= influencer.creditPoints) {
-                selectedInfluencers.add(influencer);
-                availableCredits -= influencer.creditPoints;
-              } else {
-                
-              }
-            }
+            selectedInfluencers.remove(influencer.username);
+            availableCredits += influencer.creditPoints;
           });
+        } else {
+          if (availableCredits >= influencer.creditPoints) {
+            setState(() {
+              selectedInfluencers.add(influencer.username);
+              availableCredits -= influencer.creditPoints;
+            });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("You don't have enough credits!"),
+              ),
+            );
+          }
+        }
+      },
+      child: Builder(
+        builder: (context) {
+          return Card(
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundImage: AssetImage(influencer.profilePicture),
+              ),
+              title: Text(influencer.username),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Followers: ${influencer.followerCount}'),
+                  Text('Engagement Rate: ${influencer.engagementRate}%'),
+                  Text('Credit Value: ${influencer.creditPoints}'),
+                ],
+              ),
+              trailing: Icon(
+                isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+              ),
+            ),
+          );
         },
       ),
     );
@@ -55,23 +69,53 @@ class _CreateTeamState extends State<CreateTeam> {
 
   void moveToTeamManagement() {
     if (selectedInfluencers.isNotEmpty) {
-      
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => TeamManagementScreen(
+            contestData: widget.contestData,
             selectedInfluencers: selectedInfluencers,
           ),
         ),
       );
     } else {
-     
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You have not selected any influencers'),
+        ),
+      );
     }
   }
 
-  void updateCreditPoints() {
+  void updateCreditPoints() async {
+    List<Influencer> influencers = [];
+
+    final List<String> usernames = selectedInfluencers.toList();
+
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('influencers')
+        .where('username', whereIn: usernames)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      influencers = querySnapshot.docs.map((doc) {
+        final influencerData = doc.data() as Map<String, dynamic>;
+        return Influencer(
+          username: influencerData['username'] ?? '',
+          profilePicture: influencerData['profilePicture'] ?? '',
+          followerCount: influencerData['followerCount'] ?? 0,
+          engagementRate: influencerData['engagementRate']?.toDouble() ?? 0.0,
+          creditPoints: influencerData['creditPoints']?.toDouble() ?? 0.0,
+          name: influencerData['name'] ?? '',
+          niche: influencerData['niche'] ?? '',
+        );
+      }).toList();
+    }
+
     setState(() {
-      for (var influencer in selectedInfluencers) {
+      availableCredits = 10.0;
+
+      for (var influencer in influencers) {
         availableCredits -= influencer.creditPoints;
       }
     });
@@ -104,10 +148,45 @@ class _CreateTeamState extends State<CreateTeam> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: influencers.length,
-              itemBuilder: (context, index) {
-                return buildInfluencerCard(influencers[index]);
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('influencers')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: AppText(
+                      text: 'Error: ${snapshot.error}',
+                    ),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                final influencerDocs = snapshot.data?.docs ?? [];
+
+                return ListView.builder(
+                  itemCount: influencerDocs.length,
+                  itemBuilder: (context, index) {
+                    final influencerData =
+                        influencerDocs[index].data() as Map<String, dynamic>;
+                    final influencer = Influencer(
+                      username: influencerData['username'],
+                      profilePicture: influencerData['profilePicture'],
+                      followerCount: influencerData['followerCount'],
+                      engagementRate:
+                          influencerData['engagementRate'].toDouble(),
+                      creditPoints: influencerData['creditPoints'].toDouble(),
+                      name: influencerData['name'],
+                      niche: influencerData['niche'],
+                    );
+
+                    return buildInfluencerCard(influencer);
+                  },
+                );
               },
             ),
           ),
@@ -129,13 +208,24 @@ class _CreateTeamState extends State<CreateTeam> {
               spacing: 8.0,
               children: selectedInfluencers.map((influencer) {
                 return Chip(
-                  label: Text(influencer.username),
+                  label: Text(influencer),
                   deleteIcon: const Icon(Icons.cancel),
-                  onDeleted: () {
-                    setState(() {
-                      selectedInfluencers.remove(influencer);
-                      availableCredits += influencer.creditPoints;
-                    });
+                  onDeleted: () async {
+                    final influencerDocument = await FirebaseFirestore.instance
+                        .collection('influencers')
+                        .where('username', isEqualTo: influencer)
+                        .get();
+
+                    if (influencerDocument.docs.isNotEmpty) {
+                      final influencerData =
+                          influencerDocument.docs.first.data();
+                      final double influencerCreditPoints =
+                          influencerData['creditPoints']?.toDouble() ?? 0.0;
+                      setState(() {
+                        selectedInfluencers.remove(influencer);
+                        availableCredits += influencerCreditPoints;
+                      });
+                    }
                   },
                 );
               }).toList(),

@@ -49,19 +49,23 @@ class _SignUpState extends State<SignUp> {
         ),
       );
     }
-    createUserProfile(
-      _name.text.trim(),
-      _email.text.trim(),
-      _phoneNo.text.trim(),
-    );
+    createUserProfile();
   }
 
-  Future createUserProfile(String name, String email, String phoneNo) async {
-    await FirebaseFirestore.instance.collection('users').add({
-      'name': name,
-      'phone_no': phoneNo,
-      'email': email,
-    });
+  CollectionReference contestsCollection =
+      FirebaseFirestore.instance.collection('users');
+
+  Future<void> createUserProfile() {
+    Map<String, dynamic> userData = {
+      'name': _name.text,
+      'email': _email.text,
+      'phoneNo': _phoneNo.text,
+      'username': _email.text.split('@')[0],
+      'registered_contest': [],
+      'wallet_amount': 100,
+    };
+
+    return contestsCollection.doc(_email.text).set(userData);
   }
 
   @override
@@ -191,13 +195,6 @@ class _SignUpState extends State<SignUp> {
                       ),
                       onPressed: () {
                         _formKey.currentState!.validate() ? signUp() : null;
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: ((context) => const SignIn()),
-                          ),
-                        );
                       },
                       child: const AppText(
                         text: 'Sign Up',

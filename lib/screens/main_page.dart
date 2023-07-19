@@ -1,6 +1,5 @@
 import 'package:fantasyapp/contests/leaderboard.dart';
 
-
 import 'package:flutter/material.dart';
 
 import 'home_screen.dart';
@@ -18,8 +17,8 @@ class _MainPageState extends State<MainPage> {
   int currentScreen = 0;
   final List<Widget> screens = const [
     HomeScreen(),
-    MyMatches(),
-    Leaderboard(),
+     MyMatches(),
+     Leaderboard(),
     ProfilePage(),
   ];
 

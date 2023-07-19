@@ -11,7 +11,7 @@ class WalletContainer extends StatelessWidget {
       padding: const EdgeInsets.only(right: 10.0),
       child: Container(
         height: 40,
-        width: 100,
+        width: 120,
         decoration: BoxDecoration(
           color: const Color.fromARGB(104, 61, 58, 58),
           borderRadius: BorderRadius.circular(30),
@@ -21,13 +21,12 @@ class WalletContainer extends StatelessWidget {
           children: [
             const Icon(
               color: Colors.white,
-              Icons.account_balance_wallet_outlined,
-              weight: 80,
+              Icons.account_balance_wallet_rounded,
             ),
             AppText(
               text: '₹$amount',
               color: Colors.white,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w700,
               size: 17,
             ),
             const CircleAvatar(

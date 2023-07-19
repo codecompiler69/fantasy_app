@@ -1,77 +1,67 @@
-import 'package:fantasyapp/contests/create_team.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fantasyapp/widgets/app_text.dart';
 
-import '../models/influencer.dart';
-import '../widgets/app_text.dart';
+import 'create_team.dart';
 
+enum SortOption {
+  engagementRate,
+  followerCount,
+}
 
 class InfluencerScreen extends StatefulWidget {
-  const InfluencerScreen({super.key});
+  const InfluencerScreen({Key? key, required this.contestData})
+      : super(key: key);
+  final Map<String, dynamic> contestData;
 
   @override
   State<InfluencerScreen> createState() => _InfluencerScreenState();
 }
 
 class _InfluencerScreenState extends State<InfluencerScreen> {
-  List<Influencer> filteredInfluencers = [];
+  final TextEditingController _searchController = TextEditingController();
+  SortOption _sortOption = SortOption.engagementRate;
 
-  String searchText = '';
-  String selectedSortBy = 'Follower Count';
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _searchInfluencers(String searchQuery) {
+    setState(() {
+      _sortOption = SortOption.engagementRate;
+    });
+  }
+
+  Stream<QuerySnapshot> _applySorting(CollectionReference collection) {
+    if (_sortOption == SortOption.engagementRate) {
+      return collection.orderBy('engagementRate', descending: true).snapshots();
+    } else {
+      return collection.orderBy('followerCount', descending: true).snapshots();
+    }
+  }
 
   void pushToCreateTeam() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const CreateTeam(),
+        builder: (context) => CreateTeam(
+          contestData: widget.contestData,
+        ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    filteredInfluencers = influencers;
-  }
-
-  void searchInfluencers(String? query) {
-    setState(() {
-      searchText = query ?? '';
-      filteredInfluencers = influencers.where((influencer) {
-        final nameLower = influencer.name.toLowerCase();
-        final usernameLower = influencer.username.toLowerCase();
-        final queryLower = searchText.toLowerCase();
-
-        return nameLower.contains(queryLower) ||
-            usernameLower.contains(queryLower);
-      }).toList();
-    });
-  }
-
-  void sortInfluencers(String? sortBy) {
-    setState(() {
-      selectedSortBy = sortBy ?? 'Follower Count';
-
-      filteredInfluencers.sort((a, b) {
-        switch (selectedSortBy) {
-          case 'Follower Count':
-            return b.followerCount.compareTo(a.followerCount);
-          case 'Niche':
-            return a.niche.compareTo(b.niche);
-          case 'Engagement Rate':
-            return b.engagementRate.compareTo(a.engagementRate);
-          default:
-            return 0;
-        }
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Influencers'),
+        title: const AppText(
+          text: 'Influencers',
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: const Color.fromARGB(255, 176, 144, 229),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: pushToCreateTeam,
@@ -79,66 +69,104 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
         icon: const Icon(Icons.edit),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15),
             child: TextField(
-              onChanged: searchInfluencers,
+              controller: _searchController,
+              onChanged: _searchInfluencers,
               decoration: const InputDecoration(
-                labelText: 'Search Influencers',
+                hintText: 'Search by name or username',
                 prefixIcon: Icon(Icons.search),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 20.0),
+            padding: const EdgeInsets.only(left: 15.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const AppText(
                   text: 'Sort by : ',
                   size: 18.0,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
                 const SizedBox(width: 15),
-                DropdownButton<String>(
-                  value: selectedSortBy,
-                  onChanged: sortInfluencers,
-                  items: ['Follower Count', 'Niche', 'Engagement Rate']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                DropdownButton<SortOption>(
+                  value: _sortOption,
+                  onChanged: (SortOption? option) {
+                    setState(() {
+                      _sortOption = option!;
+                    });
+                  },
+                  items: const [
+                    DropdownMenuItem<SortOption>(
+                      value: SortOption.engagementRate,
+                      child: Text('Engagement Rate'),
+                    ),
+                    DropdownMenuItem<SortOption>(
+                      value: SortOption.followerCount,
+                      child: Text('Follower Count'),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredInfluencers.length,
-              itemBuilder: (context, index) {
-                final influencer = filteredInfluencers[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage(influencer.profilePicture),
-                  ),
-                  title: AppText(
-                      text: influencer.name, fontWeight: FontWeight.bold),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(influencer.username),
-                      Text(
-                        'Followers: ${influencer.followerCount}',
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _applySorting(
+                  FirebaseFirestore.instance.collection('influencers')),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: AppText(
+                      text: 'Error: ${snapshot.error}',
+                    ),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                final influencerDocs = snapshot.data?.docs ?? [];
+
+                return ListView.builder(
+                  itemCount: influencerDocs.length,
+                  itemBuilder: (context, index) {
+                    final influencerData =
+                        influencerDocs[index].data() as Map<String, dynamic>;
+
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage:
+                            AssetImage(influencerData['profilePicture']),
                       ),
-                    ],
-                  ),
-                  trailing: AppText(
-                    text: 'Engagement Rate: ${influencer.engagementRate}%',
-                    size: 13,
-                  ),
+                      title: AppText(
+                        text: influencerData['name'],
+                        fontWeight: FontWeight.bold,
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            text: influencerData['username'],
+                          ),
+                          AppText(
+                            text:
+                                'Followers: ${influencerData['followerCount'].toString()}',
+                          ),
+                        ],
+                      ),
+                      trailing: AppText(
+                        text:
+                            'Engagement Rate: ${influencerData['engagementRate']}%',
+                        size: 13,
+                      ),
+                    );
+                  },
                 );
               },
             ),
