@@ -1,53 +1,23 @@
-import 'package:fantasyapp/contests/contest_info.dart';
-
-import 'my_matches.dart';
-import 'profile_page.dart';
-import 'package:fantasyapp/screens/chat.dart';
-
-import 'package:fantasyapp/widgets/category_container.dart';
-import 'package:fantasyapp/widgets/contest_widget.dart';
-import 'package:fantasyapp/widgets/wallet_container.dart';
+import 'package:fantasyapp/screens/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fantasyapp/widgets/app_text.dart';
+import 'package:fantasyapp/widgets/contest_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../widgets/app_text.dart';
+import '../contests/contest_info.dart';
+import '../contests/create_new_contest.dart';
+import '../widgets/category_container.dart';
+import '../widgets/wallet_container.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int currentScreen = 0;
-  final List<Widget> screens = const [
-    HomeScreen(),
-    MyMatches(),
-    ChatPage(),
-    ProfilePage(),
-  ];
-
-  List<IconData> icons = [
-    Icons.home,
-    Icons.my_library_add,
-    Icons.chat,
-    Icons.person,
-  ];
-
-  List<String> labels = [
-    'Home',
-    'My Matches',
-    'Chat',
-    'Account',
-  ];
-
-  void onTabTapped(int index) {
-    setState(() {
-      currentScreen = index;
-    });
-  }
-
   List<String> categories = [
     'All',
     'Finance',
@@ -60,34 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   int selectedIndex = 0;
-
-  List<ConstestWidget> allContestWidgets = const [
-    ConstestWidget(
-      image: AssetImage('assets/images/gaming.webp'),
-      prizepool: '10',
-      entryfees: '220',
-      category: 'Gaming',
-      contestStatus: 'live',
-    ),
-    ConstestWidget(
-      image: AssetImage('assets/images/finance.jpg'),
-      prizepool: '50',
-      entryfees: '100',
-      category: 'Finance',
-      contestStatus: 'live',
-    ),
-  ];
-
-  List<ConstestWidget> get filteredContestWidgets {
-    if (selectedIndex == 0) {
-      return allContestWidgets;
-    } else {
-      String selectedCategory = categories[selectedIndex];
-      return allContestWidgets
-          .where((contest) => contest.category == selectedCategory)
-          .toList();
-    }
-  }
+  String selectedCategory = 'All';
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +38,18 @@ class _HomeScreenState extends State<HomeScreen> {
       child: DefaultTabController(
         length: 3,
         child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateContest(),
+                ),
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
+          drawer: const Drawer(),
           appBar: AppBar(
             backgroundColor: const Color.fromARGB(255, 176, 144, 229),
             title: const AppText(
@@ -102,10 +57,30 @@ class _HomeScreenState extends State<HomeScreen> {
               fontWeight: FontWeight.bold,
             ),
             actions: [
-              const WalletContainer(amount: 12),
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(FirebaseAuth.instance.currentUser!.email)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return const WalletContainer(amount: 0);
+                  }
+                  final userData =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  final int walletAmount = userData['wallet_amount'];
+                  return WalletContainer(amount: walletAmount);
+                },
+              ),
               InkWell(
                 onTap: () {
                   FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: ((context) => const WelcomeScreen()),
+                    ),
+                  );
                 },
                 child: const Padding(
                   padding: EdgeInsets.only(right: 5.0),
@@ -131,47 +106,88 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ]),
           ),
-          body: Column(
-            children: [
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 30,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: categories.length,
-                  itemBuilder: ((context, index) {
-                    return CategoryContainer(
-                      text: categories[index],
-                      onPressed: () {
-                        setState(() {
-                          selectedIndex = index;
-                        });
-                      },
-                      isSelected: selectedIndex == index,
-                    );
-                  }),
-                ),
-              ),
-              const SizedBox(height: 30),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filteredContestWidgets.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ContestInfo(),
+          body: StreamBuilder<QuerySnapshot>(
+            stream:
+                FirebaseFirestore.instance.collection('contests').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: AppText(
+                    text: 'Error: ${snapshot.error}',
+                  ),
+                );
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final contestDocs = snapshot.data?.docs ?? [];
+              List<Map<String, dynamic>> filteredContests = contestDocs
+                  .map((doc) => doc.data() as Map<String, dynamic>)
+                  .toList();
+
+              if (selectedCategory != 'All') {
+                filteredContests = filteredContests
+                    .where((contest) => contest['category'] == selectedCategory)
+                    .toList();
+              }
+
+              return Column(
+                children: [
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    height: 30,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: categories.length,
+                      itemBuilder: ((context, index) {
+                        return CategoryContainer(
+                          text: categories[index],
+                          onPressed: () {
+                            setState(() {
+                              selectedIndex = index;
+                              selectedCategory = categories[index];
+                            });
+                          },
+                          isSelected: selectedIndex == index,
+                        );
+                      }),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredContests.length,
+                      itemBuilder: (context, index) {
+                        final contestData = filteredContests[index];
+                        return GestureDetector(
+                          onTap: () {
+                            print('contestdata: ${contestData}');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ContestInfo(
+                                  contestData: contestData,
+                                ),
+                              ),
+                            );
+                          },
+                          child: ConstestWidget(
+                            image:
+                                const AssetImage('assets/images/finance.jpg'),
+                            prizepool: contestData['prizePool'],
+                            entryfees: contestData['entryFee'],
+                            category: contestData['category'],
+                            contestStatus: contestData['status'],
                           ),
                         );
                       },
-                      child: filteredContestWidgets[index],
-                    );
-                  },
-                ),
-              ),
-            ],
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

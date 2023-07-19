@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+
 import 'package:fantasyapp/widgets/app_text.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ConstestWidget extends StatefulWidget {
   final String prizepool;
@@ -9,7 +8,6 @@ class ConstestWidget extends StatefulWidget {
   final String entryfees;
   final String category;
   final String contestStatus;
-  
 
   const ConstestWidget({
     Key? key,
@@ -18,7 +16,6 @@ class ConstestWidget extends StatefulWidget {
     required this.entryfees,
     required this.category,
     required this.contestStatus,
-   
   }) : super(key: key);
 
   @override
@@ -26,50 +23,6 @@ class ConstestWidget extends StatefulWidget {
 }
 
 class _ConstestWidgetState extends State<ConstestWidget> {
-  bool _timerRunning = false;
-  late Timer _timer;
-  int _totalSeconds = 10;
-
-  SharedPreferences? _preferences;
-
-  @override
-  void initState() {
-    super.initState();
-    initializePreferences();
-  }
-
-  void initializePreferences() async {
-    _preferences = await SharedPreferences.getInstance();
-    setState(() {
-      _totalSeconds = _preferences!.getInt('timerDuration') ?? _totalSeconds;
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  void startCountdownTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_totalSeconds > 0) {
-          _totalSeconds--;
-          _preferences!.setInt('timerDuration', _totalSeconds);
-        } else {
-          _timerRunning = false;
-          stopCountdownTimer();
-        }
-      });
-    });
-  }
-
-  void stopCountdownTimer() {
-    _timer.cancel();
-    _preferences!.remove('timerDuration');
-  }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -99,25 +52,13 @@ class _ConstestWidgetState extends State<ConstestWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _timerRunning = !_timerRunning;
-                        if (_timerRunning) {
-                          if (_totalSeconds > 0) {
-                            startCountdownTimer();
-                          }
-                        } else {
-                          stopCountdownTimer();
-                        }
-                      });
-                    },
-                    child: const AppText(
+                  const InkWell(
+                    child: AppText(
                       text: 'Starts In',
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  AppText(text: formatDuration(_totalSeconds)),
+                  const AppText(text: '00 hr 00 min 00 sec'),
                   const SizedBox(
                     height: 5,
                   ),
@@ -141,17 +82,5 @@ class _ConstestWidgetState extends State<ConstestWidget> {
         ),
       ),
     );
-  }
-
-  String formatDuration(int totalSeconds) {
-    if (totalSeconds > 0) {
-      int seconds = totalSeconds % 60;
-      int minutes = (totalSeconds ~/ 60) % 60;
-      int hours = (totalSeconds ~/ 3600) % 24;
-
-      return '$hours hr $minutes min $seconds sec';
-    } else {
-      return 'Timer Ended';
-    }
   }
 }

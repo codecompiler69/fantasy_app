@@ -6,14 +6,14 @@ Future<List<String>> fetchDataFromFirebase() async {
   QuerySnapshot snapshot =
       await FirebaseFirestore.instance.collection('categories').get();
 
-  snapshot.docs.forEach((document) {
+  for (var document in snapshot.docs) {
 
     Map<String, dynamic>? data = document.data() as Map<String, dynamic>;
     String? categoryName = data['category_name'] as String?;
     if (categoryName != null) {
       dataList.add(categoryName);
     }
-  });
+  }
 
   return dataList;
 }

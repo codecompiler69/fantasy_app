@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'influencer_selection_screen.dart';
 
 class ContestInfo extends StatefulWidget {
-  const ContestInfo({super.key});
+  final Map<String, dynamic> contestData;
+
+  const ContestInfo({required this.contestData, Key? key}) : super(key: key);
 
   @override
   State<ContestInfo> createState() => _ContestInfoState();
@@ -64,7 +66,6 @@ class _ContestInfoState extends State<ContestInfo> {
               text: 'July 10th - July 17th',
               size: 15,
             ),
-            const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
                 itemCount: rules.length,
@@ -112,8 +113,9 @@ class _ContestInfoState extends State<ContestInfo> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const InfluencerScreen(),
+                          builder: (context) => InfluencerScreen(
+                              contestData: widget.contestData,
+                              ),
                         ),
                       );
                     }
