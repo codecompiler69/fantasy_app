@@ -14,15 +14,12 @@ class _LeaderboardState extends State<Leaderboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Learderboard'),
-      ),
       body: Column(
         children: [
           Expanded(
             child: Container(
               decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 43, 95, 174),
+                color: Colors.deepPurple,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(60),
                   bottomRight: Radius.circular(60),
@@ -191,7 +188,7 @@ class _LeaderboardState extends State<Leaderboard> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Color.fromARGB(255, 228, 224, 236),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                         child: ListTile(
                           leading: Text(
