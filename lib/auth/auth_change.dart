@@ -3,7 +3,7 @@ import 'package:fantasyapp/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/sign_in.dart';
+import 'sign_in.dart';
 
 class CheckForSignIn extends StatelessWidget {
   const CheckForSignIn({super.key});

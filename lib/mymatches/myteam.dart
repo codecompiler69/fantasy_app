@@ -1,62 +1,143 @@
-import 'package:fantasyapp/contests/team_management.dart';
-import 'package:fantasyapp/models/influencer.dart';
-import 'package:fantasyapp/widgets/app_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../widgets/app_text.dart';
 
 class MyTeam extends StatefulWidget {
-  const MyTeam({super.key});
+  final Map<String, dynamic> contestData;
+
+  const MyTeam({Key? key, required this.contestData}) : super(key: key);
 
   @override
   State<MyTeam> createState() => _MyTeamState();
 }
 
 class _MyTeamState extends State<MyTeam> {
+  String? teamName;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTeamName();
+  }
+
+  Future<void> fetchTeamName() async {
+    final String? currentUser = FirebaseAuth.instance.currentUser?.email;
+    final String contestId = widget.contestData['id'];
+
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('teams')
+        .where('contestId', isEqualTo: contestId)
+        .where('userId', isEqualTo: currentUser)
+        .get();
+
+    final List<QueryDocumentSnapshot> teamDocs = querySnapshot.docs;
+    if (teamDocs.isNotEmpty) {
+      final teamData = teamDocs.first.data() as Map<String, dynamic>;
+      setState(() {
+        teamName = teamData['teamName'];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            child: AppText(
-              text: 'My Team',
-              size: 40,
-            ),
-          ),
-          Container(
-            child: AppText(
-              text: 'Team Name',
-              size: 25,
-            ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Expanded(
-              child: ListView.builder(
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              Influencer tile = influencers[index];
-              return Card(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage(tile.profilePicture),
-                  ),
-                  title: Text(tile.username),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Followers: ${tile.followerCount}'),
-                      Text('Engagement Rate: ${tile.engagementRate}%'),
-                      Text('Niche: ${tile.niche}'),
-                    ],
-                  ),
-                ),
+    final String? currentUser = FirebaseAuth.instance.currentUser?.email;
+    final String contestId = widget.contestData['id'];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 22,
+        ),
+        teamName != null
+            ? AppText(
+                text: teamName!,
+                size: 25,
+              )
+            : const Text('My Team'),
+        const SizedBox(
+          height: 30,
+        ),
+        Expanded(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('teams')
+                .where('contestId', isEqualTo: contestId)
+                .where('userId', isEqualTo: currentUser)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              final teamDocs = snapshot.data?.docs ?? [];
+              final List<Map<String, dynamic>> teams = teamDocs
+                  .map((doc) => doc.data() as Map<String, dynamic>)
+                  .toList();
+
+              return ListView.builder(
+                itemCount: teams.length,
+                itemBuilder: (context, index) {
+                  final teamData = teams[index];
+                  final List<dynamic> selectedInfluencersData =
+                      teamData['selectedInfluencers'];
+
+                  return Card(
+                    child: Column(
+                      children: selectedInfluencersData
+                          .map(
+                            (influencer) => ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    AssetImage(influencer['profilePicture']),
+                              ),
+                              title: Text(
+                                influencer['name'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    influencer['username'],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  Text(
+                                    'Followers: ${influencer['followerCount']}',
+                                  ),
+                                  const SizedBox(height: 10),
+                                ],
+                              ),
+                              trailing: Text(
+                                " Engagement Rate: ${influencer['engagementRate']}%",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  );
+                },
               );
             },
-          ))
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 }

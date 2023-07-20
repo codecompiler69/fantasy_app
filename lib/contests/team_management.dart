@@ -3,6 +3,7 @@ import 'package:fantasyapp/widgets/app_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/influencer.dart';
+import '../screens/main_page.dart';
 
 class TeamManagementScreen extends StatefulWidget {
   final List<String> selectedInfluencers;
@@ -96,7 +97,7 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
 
       final userData = userSnapshot.data() as Map<String, dynamic>;
       final int walletAmount = userData['wallet_amount'];
-      final int entryFee = widget.contestData['entryFee'];
+      final int entryFee = int.parse(widget.contestData['entryFee']);
 
       if (walletAmount < entryFee) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -141,13 +142,26 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
         });
 
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Changes saved successfully!'),
-          ),
-        );
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: const AppText(text: 'Thankyou for registering'),
+                  content: const Image(
+                    image: AssetImage('assets/images/icons8-tick.gif'),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MainPage()),
+                          );
+                        },
+                        child: const AppText(text: "Ok"))
+                  ],
+                ));
       } catch (error) {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('An error occurred. Please try again.'),

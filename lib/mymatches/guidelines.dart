@@ -38,7 +38,6 @@ class _GuidelinesState extends State<Guidelines> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 50),
             const AppText(
               text: 'Influencer Showdown',
               size: 30,
@@ -61,7 +60,6 @@ class _GuidelinesState extends State<Guidelines> {
                 itemBuilder: (context, index) {
                   final rule = rules[index];
                   final isBold = index % 2 == 0;
-
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5.0),
                     child: AppText(

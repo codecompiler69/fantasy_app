@@ -1,8 +1,8 @@
 import 'package:fantasyapp/mymatches/my_contest.dart';
-import 'package:fantasyapp/widgets/app_text.dart';
 import 'package:flutter/material.dart';
-
-import '../widgets/contest_widget.dart';
+import 'package:fantasyapp/widgets/contest_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyMatches extends StatefulWidget {
   const MyMatches({super.key});
@@ -12,75 +12,68 @@ class MyMatches extends StatefulWidget {
 }
 
 class _MyMatchesState extends State<MyMatches> {
-  List<String> categories = [
-    'All',
-    'Finance',
-    'Gaming',
-    'Technology',
-    'Business',
-    'Science',
-    'Fitness',
-    'Politics'
-  ];
-  int selectedIndex = 0;
-  List<ConstestWidget> allContestWidgets = const [
-    ConstestWidget(
-      image: AssetImage('assets/images/gaming.webp'),
-      prizepool: '10',
-      entryfees: '220',
-      category: 'Gaming',
-      contestStatus: 'live',
-    ),
-    ConstestWidget(
-      image: AssetImage('assets/images/finance.jpg'),
-      prizepool: '50',
-      entryfees: '100',
-      category: 'Finance',
-      contestStatus: 'live',
-    ),
-  ];
-  List<ConstestWidget> get filteredContestWidgets {
-    if (selectedIndex == 0) {
-      return allContestWidgets;
-    } else {
-      String selectedCategory = categories[selectedIndex];
-      return allContestWidgets
-          .where((contest) => contest.category == selectedCategory)
-          .toList();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 176, 144, 229),
-        title: AppText(
-          text: 'My Matches',
-          fontWeight: FontWeight.w500,
+    return SafeArea(
+      child: Scaffold(
+        drawer: const Drawer(),
+        appBar: AppBar(
+          title: const Text('My Matches'),
         ),
-      ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 30,
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredContestWidgets.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MyContest()));
-                  },
-                  child: filteredContestWidgets[index],
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('contests')
+                .where('registeredUsers',
+                    arrayContains: FirebaseAuth.instance.currentUser!.email)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
                 );
-              },
-            ),
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              final contestDocs = snapshot.data?.docs ?? [];
+              final contests = contestDocs
+                  .map((doc) => doc.data() as Map<String, dynamic>)
+                  .toList();
+
+              return ListView.builder(
+                itemCount: contests.length,
+                itemBuilder: (context, index) {
+                  final contestData = contests[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyContest(
+                            contestData: contestData,
+                          ),
+                        ),
+                      );
+                    },
+                    child: ConstestWidget(
+                      image: const AssetImage('assets/images/finance.jpg'),
+                      prizepool: contestData['prizePool'],
+                      entryfees: contestData['entryFee'],
+                      category: contestData['category'],
+                      contestStatus: contestData['status'],
+                    ),
+                  );
+                },
+              );
+            },
           ),
-        ],
+        ),
       ),
     );
   }

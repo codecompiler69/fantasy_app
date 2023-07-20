@@ -1,5 +1,5 @@
-import 'package:fantasyapp/screens/sign_in.dart';
-import 'package:fantasyapp/screens/sign_up.dart';
+import 'package:fantasyapp/auth/sign_in.dart';
+import 'package:fantasyapp/auth/sign_up.dart';
 
 import 'package:fantasyapp/widgets/welcome_buttons.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasyapp/screens/main_page.dart';
-import 'package:fantasyapp/screens/sign_in.dart';
+import 'package:fantasyapp/auth/sign_in.dart';
 import 'package:fantasyapp/widgets/app_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +61,6 @@ class _SignUpState extends State<SignUp> {
       'email': _email.text,
       'phoneNo': _phoneNo.text,
       'username': _email.text.split('@')[0],
-      'registered_contest': [],
       'wallet_amount': 100,
     };
 

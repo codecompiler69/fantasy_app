@@ -1,4 +1,4 @@
-import 'package:fantasyapp/contests/leaderboard.dart';
+import 'package:fantasyapp/screens/leaderboard.dart';
 
 import 'package:flutter/material.dart';
 
@@ -17,8 +17,8 @@ class _MainPageState extends State<MainPage> {
   int currentScreen = 0;
   final List<Widget> screens = const [
     HomeScreen(),
-     MyMatches(),
-     Leaderboard(),
+    MyMatches(),
+    Leaderboard(),
     ProfilePage(),
   ];
 
@@ -45,11 +45,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          screens[currentScreen],
-        ],
-      ),
+      body: screens[currentScreen],
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: true,
         showUnselectedLabels: true,

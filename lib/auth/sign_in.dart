@@ -1,5 +1,5 @@
 import 'package:fantasyapp/screens/main_page.dart';
-import 'package:fantasyapp/screens/sign_up.dart';
+import 'package:fantasyapp/auth/sign_up.dart';
 import 'package:fantasyapp/auth/services/google_auth_service.dart';
 import 'package:fantasyapp/widgets/app_text.dart';
 import 'package:flutter/material.dart';
