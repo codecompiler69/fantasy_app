@@ -37,7 +37,7 @@ class _SignUpState extends State<SignUp> {
             (value) => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: ((context) => const MainPage()),
+                builder: ((context) => const MainPage(currentScreen: 0,)),
               ),
             ),
           );

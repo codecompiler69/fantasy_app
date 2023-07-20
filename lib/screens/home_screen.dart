@@ -1,3 +1,5 @@
+import 'package:fantasyapp/screens/main_page.dart';
+
 import 'package:fantasyapp/screens/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,7 @@ import '../widgets/category_container.dart';
 import '../widgets/wallet_container.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -31,6 +33,72 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int selectedIndex = 0;
   String selectedCategory = 'All';
+
+  Future<void> _checkIfRegistered(
+      String contestId, Map<String, dynamic> contestData) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.email)
+          .get();
+
+      final List<String> registeredContests =
+          List<String>.from(userData.get('registeredContests'));
+
+      if (registeredContests.contains(contestId)) {
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Thank You!'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('You have already registered for this contest.'),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MainPage(
+                            currentScreen: 1,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('My Matches'),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close the dialog
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ContestInfo(
+              contestData: contestData,
+            ),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,17 +229,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: filteredContests.length,
                       itemBuilder: (context, index) {
                         final contestData = filteredContests[index];
+                        final contestId = contestData['id'];
+
                         return GestureDetector(
                           onTap: () {
-                            print('contestdata: ${contestData}');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ContestInfo(
-                                  contestData: contestData,
-                                ),
-                              ),
-                            );
+                            _checkIfRegistered(
+                              contestId,
+                              contestData,
+                            ); // Check if user is registered
                           },
                           child: ConstestWidget(
                             image:

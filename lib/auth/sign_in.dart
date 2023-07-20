@@ -34,7 +34,9 @@ class _SignInState extends State<SignIn> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const MainPage(),
+          builder: (context) => const MainPage(
+            currentScreen: 0,
+          ),
         ),
       );
     } catch (e) {

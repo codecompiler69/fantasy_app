@@ -13,7 +13,7 @@ class CheckForSignIn extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return const MainPage();
+          return const MainPage(currentScreen: 0,);
         } else {
           return const WelcomeScreen();
         }

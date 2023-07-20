@@ -7,7 +7,8 @@ import 'my_matches.dart';
 import 'profile_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  final int currentScreen;
+  const MainPage({Key? key, required this.currentScreen}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -40,6 +41,12 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       currentScreen = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    currentScreen = widget.currentScreen;
   }
 
   @override

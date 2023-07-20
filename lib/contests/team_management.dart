@@ -155,7 +155,9 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const MainPage()),
+                                builder: (context) => const MainPage(
+                                      currentScreen: 0,
+                                    )),
                           );
                         },
                         child: const AppText(text: "Ok"))
