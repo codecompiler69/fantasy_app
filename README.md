@@ -57,7 +57,6 @@ The Fantasy App uses the following dependencies:
 
 - `fluttertoast`: For showing toast messages in the app.
 
-- _(Add more dependencies as needed)_
 
 ## Contributing
 
