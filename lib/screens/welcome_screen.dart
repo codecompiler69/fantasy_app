@@ -25,7 +25,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const Center(
                 child: Text(
-                  'Welcome to Fantasy App',
+                  'Welcome to SocialG',
                   style: TextStyle(fontSize: 25),
                 ),
               ),

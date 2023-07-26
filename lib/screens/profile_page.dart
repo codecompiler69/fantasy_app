@@ -24,18 +24,16 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> fetchUserData() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      final userDoc =
-          FirebaseFirestore.instance.collection('users').doc(currentUser.email);
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final userDoc =
+        FirebaseFirestore.instance.collection('users').doc(currentUser.email);
 
-      final userData = await userDoc.get();
+    final userData = await userDoc.get();
 
-      setState(() {
-        _usernameController.text = userData['username'] ?? '';
-        selectedDate = (userData['dateOfBirth'] as Timestamp?)?.toDate();
-      });
-    }
+    setState(() {
+      _usernameController.text = userData['username'] ?? '';
+      selectedDate = (userData['dateOfBirth'] as Timestamp?)?.toDate();
+    });
   }
 
   Future<void> _selectDate(BuildContext context) async {

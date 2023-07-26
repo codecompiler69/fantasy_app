@@ -42,7 +42,7 @@ class _LeaderboardState extends State<Leaderboard> {
 
         double totalPoints = 0;
         for (var influencerId in selectedInfluencers) {
-          // Fetch influencer data using the influencerId
+          
           DocumentSnapshot influencerSnapshot = await FirebaseFirestore.instance
               .collection('influencers')
               .doc(influencerId)
@@ -56,7 +56,7 @@ class _LeaderboardState extends State<Leaderboard> {
           totalPoints += (shares * 1.5) + (comments * 1.0) + (likes * 0.5);
         }
 
-        // Get the username of the team owner
+        
         String userId = teamSnapshot['userId'];
         DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
             .collection('users')
