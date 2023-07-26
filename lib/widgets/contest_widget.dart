@@ -52,13 +52,6 @@ class _ConstestWidgetState extends State<ConstestWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const InkWell(
-                    child: AppText(
-                      text: 'Starts In',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const AppText(text: '00 hr 00 min 00 sec'),
                   const SizedBox(
                     height: 5,
                   ),
@@ -68,7 +61,7 @@ class _ConstestWidgetState extends State<ConstestWidget> {
                   ),
                   AppText(text: '${widget.prizepool}k'),
                   const SizedBox(
-                    height: 5,
+                    height: 10,
                   ),
                   const AppText(
                     text: 'Entry Fee',

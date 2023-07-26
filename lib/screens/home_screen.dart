@@ -36,75 +36,76 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _checkIfRegistered(
       String contestId, Map<String, dynamic> contestData) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userData = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.email)
-          .get();
+    final user = FirebaseAuth.instance.currentUser!;
+    final userData = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.email)
+        .get();
 
-      final List<String> registeredContests =
-          List<String>.from(userData.get('registeredContests'));
+    final List<String> registeredContests =
+        List<String>.from(userData.get('registeredContests'));
 
-      if (registeredContests.contains(contestId)) {
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Thank You!'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('You have already registered for this contest.'),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MainPage(
-                            currentScreen: 1,
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Text('My Matches'),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
+    if (registeredContests.contains(contestId)) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Thank You!'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('You have already registered for this contest.'),
+                const SizedBox(height: 10),
+                ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context); // Close the dialog
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainPage(
+                          currentScreen: 1,
+                        ),
+                      ),
+                    );
                   },
-                  child: const Text('Close'),
+                  child: const Text('My Matches'),
                 ),
               ],
-            );
-          },
-        );
-      } else {
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ContestInfo(
-              contestData: contestData,
             ),
-          ),
-        );
-      }
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      goToContest(contestData);
     }
+  }
+
+  void goToContest(Map<String, dynamic> contestData) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContestInfo(
+          contestData: contestData,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           floatingActionButton: FloatingActionButton(
             onPressed: () {
@@ -163,10 +164,6 @@ class _HomeScreenState extends State<HomeScreen> {
               Tab(
                 icon: Icon(Icons.live_tv_rounded),
                 text: 'Live',
-              ),
-              Tab(
-                icon: Icon(Icons.calendar_month_outlined),
-                text: 'Upcoming',
               ),
               Tab(
                 icon: Icon(Icons.emoji_events_outlined),
@@ -231,12 +228,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         final contestData = filteredContests[index];
                         final contestId = contestData['id'];
 
-                        return GestureDetector(
+                        return InkWell(
                           onTap: () {
                             _checkIfRegistered(
                               contestId,
                               contestData,
-                            ); // Check if user is registered
+                            );
                           },
                           child: ConstestWidget(
                             image:

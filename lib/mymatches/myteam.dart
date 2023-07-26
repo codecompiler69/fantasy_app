@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../widgets/app_text.dart';
+import '../models/influencer.dart';
 
 class MyTeam extends StatefulWidget {
   final Map<String, dynamic> contestData;
@@ -49,7 +50,7 @@ class _MyTeamState extends State<MyTeam> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 22,
         ),
         teamName != null
@@ -95,40 +96,82 @@ class _MyTeamState extends State<MyTeam> {
                   return Card(
                     child: Column(
                       children: selectedInfluencersData
-                          .map(
-                            (influencer) => ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage:
-                                    AssetImage(influencer['profilePicture']),
-                              ),
-                              title: Text(
-                                influencer['name'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    influencer['username'],
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Text(
-                                    'Followers: ${influencer['followerCount']}',
-                                  ),
-                                  const SizedBox(height: 10),
-                                ],
-                              ),
-                              trailing: Text(
-                                " Engagement Rate: ${influencer['engagementRate']}%",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          )
+                          .map((influencerId) =>
+                              StreamBuilder<DocumentSnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('influencers')
+                                    .doc(influencerId)
+                                    .snapshots(),
+                                builder: (context, influencerSnapshot) {
+                                  if (influencerSnapshot.hasError) {
+                                    return const Text('Error');
+                                  }
+                                  if (influencerSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  }
+
+                                  final influencerData = influencerSnapshot.data
+                                      ?.data() as Map<String, dynamic>?;
+
+                                  if (influencerData == null) {
+                                    return const AppText(
+                                        text: 'No data available');
+                                  }
+
+                                  final Influencer influencer = Influencer(
+                                    username: influencerData['username'],
+                                    profilePicture: 'assets/images/dummy.jpg',
+                                    followerCount:
+                                        influencerData['followerCount'],
+                                    engagementRate:
+                                        influencerData['engagementRate']
+                                            ?.toDouble(),
+                                    creditPoints: influencerData['creditPoints']
+                                        ?.toDouble(),
+                                    name: influencerData['name'] ?? '',
+                                    niche: influencerData['niche'] ?? '',
+                                    shareCount: influencerData['shareCount'],
+                                    likesCount: influencerData['likesCount'],
+                                    commentsCount:
+                                        influencerData['commentsCount'],
+                                  );
+
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage(influencer.profilePicture),
+                                    ),
+                                    title: Text(
+                                      influencer.name,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          influencer.username,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        Text(
+                                          'Followers: ${influencer.followerCount}',
+                                        ),
+                                        const SizedBox(height: 10),
+                                      ],
+                                    ),
+                                    trailing: Text(
+                                      " Engagement Rate: ${influencer.engagementRate}%",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ))
                           .toList(),
                     ),
                   );

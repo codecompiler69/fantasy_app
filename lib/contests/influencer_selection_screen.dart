@@ -140,9 +140,8 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                         influencerDocs[index].data() as Map<String, dynamic>;
 
                     return ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage:
-                            AssetImage(influencerData['profilePicture']),
+                      leading: const CircleAvatar(
+                        backgroundImage: AssetImage('assets/images/dummy.jpg'),
                       ),
                       title: AppText(
                         text: influencerData['name'],

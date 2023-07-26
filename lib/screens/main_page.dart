@@ -1,5 +1,4 @@
-import 'package:fantasyapp/screens/leaderboard.dart';
-
+import 'package:fantasyapp/screens/new_leaderboard.dart';
 import 'package:flutter/material.dart';
 
 import 'home_screen.dart';

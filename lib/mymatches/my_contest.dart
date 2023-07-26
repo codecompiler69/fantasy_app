@@ -1,4 +1,4 @@
-import 'package:fantasyapp/screens/leaderboard.dart';
+import 'package:fantasyapp/mymatches/leaderboard.dart';
 import 'package:fantasyapp/mymatches/guidelines.dart';
 import 'package:fantasyapp/mymatches/myteam.dart';
 import 'package:fantasyapp/widgets/app_text.dart';
@@ -35,10 +35,13 @@ class _MyContestState extends State<MyContest> {
           ]),
         ),
         body: TabBarView(
+          physics: const ScrollPhysics(parent: ScrollPhysics()),
           children: [
             const Guidelines(),
             MyTeam(contestData: widget.contestData),
-            const Leaderboard(),
+            Leaderboard(
+              contestId: widget.contestData['id'],
+            ),
           ],
         ),
       ),

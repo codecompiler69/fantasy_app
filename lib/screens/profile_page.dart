@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fantasyapp/screens/welcome_screen.dart';
 import 'package:fantasyapp/widgets/app_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +82,19 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+            label: const AppText(
+              text: 'Logout',
+            ),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: ((context) => const WelcomeScreen()),
+                ),
+              );
+            }),
         appBar: AppBar(
           actions: [
             if (isEditing)

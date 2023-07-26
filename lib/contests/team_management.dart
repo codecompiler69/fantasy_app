@@ -17,7 +17,7 @@ class TeamManagementScreen extends StatefulWidget {
 }
 
 class _TeamManagementScreenState extends State<TeamManagementScreen> {
-  List<Influencer> influencers = [];
+  List<DocumentSnapshot> influencers = [];
   String teamName = 'Enter your Team Name';
   bool isEditing = false;
 
@@ -28,25 +28,16 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
   }
 
   Future<void> fetchInfluencerDetails() async {
-    final List<String> usernames = widget.selectedInfluencers;
+    final List<String> influencerIds = widget.selectedInfluencers;
 
-    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('influencers')
-        .where('username', whereIn: usernames)
-        .get();
-
-    final List<Influencer> fetchedInfluencers = querySnapshot.docs.map((doc) {
-      final influencerData = doc.data() as Map<String, dynamic>;
-      return Influencer(
-        username: influencerData['username'],
-        profilePicture: influencerData['profilePicture'],
-        followerCount: influencerData['followerCount'],
-        engagementRate: influencerData['engagementRate']?.toDouble(),
-        creditPoints: influencerData['creditPoints']?.toDouble(),
-        name: influencerData['name'] ?? '',
-        niche: influencerData['niche'] ?? '',
-      );
-    }).toList();
+    final List<DocumentSnapshot> fetchedInfluencers = await Future.wait(
+      influencerIds.map((id) async {
+        return await FirebaseFirestore.instance
+            .collection('influencers')
+            .doc(id)
+            .get();
+      }),
+    );
 
     setState(() {
       influencers = fetchedInfluencers;
@@ -73,23 +64,9 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
         ),
       );
     } else {
-      final List<Map<String, dynamic>> selectedInfluencerData =
-          influencers.map((influencer) {
-        return {
-          'username': influencer.username,
-          'profilePicture': influencer.profilePicture,
-          'followerCount': influencer.followerCount,
-          'engagementRate': influencer.engagementRate,
-          'creditPoints': influencer.creditPoints,
-          'name': influencer.name,
-          'niche': influencer.niche,
-        };
-      }).toList();
-
       final String? currentUser = FirebaseAuth.instance.currentUser!.email;
       final String contestId = widget.contestData['id'];
 
-      // Fetch the current user's data
       final DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser)
@@ -113,7 +90,7 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
 
       final Map<String, dynamic> teamData = {
         'teamName': teamName,
-        'selectedInfluencers': selectedInfluencerData,
+        'selectedInfluencers': widget.selectedInfluencers,
         'userId': currentUser,
         'contestId': contestId,
       };
@@ -143,26 +120,29 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
 
         // ignore: use_build_context_synchronously
         showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: const AppText(text: 'Thankyou for registering'),
-                  content: const Image(
-                    image: AssetImage('assets/images/icons8-tick.gif'),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const MainPage(
-                                      currentScreen: 0,
-                                    )),
-                          );
-                        },
-                        child: const AppText(text: "Ok"))
-                  ],
-                ));
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const AppText(text: 'Thank you for registering'),
+            content: const Image(
+              image: AssetImage('assets/images/icons8-tick.gif'),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainPage(
+                        currentScreen: 0,
+                      ),
+                    ),
+                  );
+                },
+                child: const AppText(text: "Ok"),
+              ),
+            ],
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -207,7 +187,22 @@ class _TeamManagementScreenState extends State<TeamManagementScreen> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: influencers.length,
             itemBuilder: (context, index) {
-              final influencer = influencers[index];
+              final influencerDoc = influencers[index];
+              final influencerData =
+                  influencerDoc.data() as Map<String, dynamic>;
+              final influencer = Influencer(
+                username: influencerData['username'],
+                profilePicture: 'assets/images/dummy.jpg',
+                followerCount: influencerData['followerCount'],
+                engagementRate: influencerData['engagementRate']?.toDouble(),
+                creditPoints: influencerData['creditPoints']?.toDouble(),
+                name: influencerData['name'] ?? '',
+                niche: influencerData['niche'] ?? '',
+                shareCount: influencerData['shareCount'],
+                likesCount: influencerData['likesCount'],
+                commentsCount: influencerData['commentsCount'],
+              );
+
               return Card(
                 child: ListTile(
                   leading: CircleAvatar(

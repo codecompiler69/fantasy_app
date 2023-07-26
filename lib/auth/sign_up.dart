@@ -37,7 +37,9 @@ class _SignUpState extends State<SignUp> {
             (value) => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: ((context) => const MainPage(currentScreen: 0,)),
+                builder: ((context) => const MainPage(
+                      currentScreen: 0,
+                    )),
               ),
             ),
           );
@@ -62,6 +64,7 @@ class _SignUpState extends State<SignUp> {
       'phoneNo': _phoneNo.text,
       'username': _email.text.split('@')[0],
       'wallet_amount': 100,
+      'registeredContests': [],
     };
 
     return contestsCollection.doc(_email.text).set(userData);

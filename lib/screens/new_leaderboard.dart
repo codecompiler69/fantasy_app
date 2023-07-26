@@ -175,66 +175,64 @@ class _LeaderboardState extends State<Leaderboard> {
           ),
           Expanded(
             flex: 2,
-            child: Container(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                child: ListView.builder(
-                  itemCount: winners.length,
-                  itemBuilder: ((context, index) {
-                    Winners currentwinner = winners[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 15.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 228, 224, 236),
-                          borderRadius: BorderRadius.circular(30),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              child: ListView.builder(
+                itemCount: winners.length,
+                itemBuilder: ((context, index) {
+                  Winners currentwinner = winners[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 15.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 228, 224, 236),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: ListTile(
+                        leading: Text(
+                          (index + 4).toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: GoogleFonts.merriweather().fontFamily,
+                            fontSize: 20,
+                          ),
                         ),
-                        child: ListTile(
-                          leading: Text(
-                            (index + 4).toString(),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: GoogleFonts.merriweather().fontFamily,
-                              fontSize: 20,
+                        title: Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 22,
+                              backgroundImage:
+                                  AssetImage('assets/images/logo.png'),
                             ),
-                          ),
-                          title: Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 22,
-                                backgroundImage:
-                                    AssetImage('assets/images/logo.png'),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                currentwinner.name,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily:
-                                      GoogleFonts.merriweather().fontFamily,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          trailing: Text(
-                            currentwinner.score.toString(),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: GoogleFonts.merriweather().fontFamily,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
+                            const SizedBox(
+                              width: 10,
                             ),
+                            Text(
+                              currentwinner.name,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily:
+                                    GoogleFonts.merriweather().fontFamily,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: Text(
+                          currentwinner.score.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: GoogleFonts.merriweather().fontFamily,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                    );
-                  }),
-                ),
+                    ),
+                  );
+                }),
               ),
             ),
           ),
