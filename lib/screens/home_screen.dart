@@ -101,6 +101,63 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+   Future<void> _addMoneyToWallet(int amountToAdd) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final userData = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.email)
+        .get();
+
+    int currentAmount = userData.get('wallet_amount');
+    int newAmount = currentAmount + amountToAdd;
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.email)
+        .update({'wallet_amount': newAmount});
+  }
+
+ 
+  Future<void> _showAddMoneyDialog() async {
+    int amountToAdd = 0;
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Money to Wallet'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  amountToAdd = int.tryParse(value) ?? 0;
+                },
+                decoration: const InputDecoration(labelText: 'Amount'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _addMoneyToWallet(amountToAdd);
+                Navigator.pop(context);
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -132,11 +189,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError || !snapshot.hasData) {
-                  return const WalletContainer(amount: 0);
+                  return WalletContainer(
+                    amount: 0,
+                    onTap: _showAddMoneyDialog,
+                  );
                 }
                 final userData = snapshot.data!.data() as Map<String, dynamic>;
                 final int walletAmount = userData['wallet_amount'];
-                return WalletContainer(amount: walletAmount);
+                return WalletContainer(
+                  amount: walletAmount,
+                  onTap: _showAddMoneyDialog,
+                );
               },
             ),
             InkWell(

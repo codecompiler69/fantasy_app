@@ -25,14 +25,12 @@ class _CreateContestState extends State<CreateContest> {
 
     // Prepare the contest data
     Map<String, dynamic> contestData = {
-      
       'id': contestId,
       'name': contestName.text,
       'prizePool': prizePool.text,
       'entryFee': entryFee.text,
       'category': category.text,
       'status': dropdownValue,
-      'registered_user': [],
     };
 
     // Add the contest to Firestore
@@ -111,18 +109,16 @@ class _CreateContestState extends State<CreateContest> {
               FloatingActionButton.extended(
                 onPressed: () {
                   addContest().then((_) {
-              
                     contestName.clear();
                     prizePool.clear();
                     entryFee.clear();
                     category.clear();
 
-                   
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Contest added successfully')),
+                      const SnackBar(
+                          content: Text('Contest added successfully')),
                     );
                   }).catchError((error) {
-                    
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Failed to add contest: $error')),
                     );

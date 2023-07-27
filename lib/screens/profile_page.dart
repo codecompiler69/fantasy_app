@@ -63,6 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
         'dateOfBirth': selectedDate,
       });
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
       );
@@ -78,202 +79,198 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
-            label: const AppText(
-              text: 'Logout',
-            ),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: ((context) => const WelcomeScreen()),
-                ),
-              );
-            }),
-        appBar: AppBar(
-          actions: [
-            if (isEditing)
-              IconButton(
-                onPressed: updateProfile,
-                icon: const Icon(Icons.save),
-              )
-            else
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    isEditing = true;
-                  });
-                },
-                icon: const Icon(Icons.edit),
-              )
-          ],
-          backgroundColor: const Color.fromARGB(255, 176, 144, 229),
-          title: const Text(
-            'My Profile',
-            style: TextStyle(fontWeight: FontWeight.w800),
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+          label: const AppText(
+            text: 'Logout',
           ),
-          leading: const Icon(Icons.arrow_back_sharp),
-          centerTitle: true,
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: ((context) => const WelcomeScreen()),
+              ),
+            );
+          }),
+      appBar: AppBar(
+        actions: [
+          if (isEditing)
+            IconButton(
+              onPressed: updateProfile,
+              icon: const Icon(Icons.save),
+            )
+          else
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  isEditing = true;
+                });
+              },
+              icon: const Icon(Icons.edit),
+            )
+        ],
+        backgroundColor: const Color.fromARGB(255, 176, 144, 229),
+        title: const Text(
+          'My Profile',
+          style: TextStyle(fontWeight: FontWeight.w800),
         ),
-        body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(currentUser.email)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasData && snapshot.data!.exists) {
-              final userData = snapshot.data!.data() as Map<String, dynamic>;
-              _usernameController.text = userData['username'] ?? '';
+        leading: const Icon(Icons.arrow_back_sharp),
+        centerTitle: true,
+      ),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.email)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData && snapshot.data!.exists) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
+            _usernameController.text = userData['username'] ?? '';
 
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 70),
-                    Row(
-                      children: [
-                        const SizedBox(width: 30),
-                        Container(
-                          height: 90,
-                          width: 90,
-                          decoration:
-                              const BoxDecoration(shape: BoxShape.circle),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: const Icon(
-                              Icons.person,
-                              size: 100,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 30),
-                        Column(
-                          children: [
-                            Text(
-                              userData['name'],
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w800),
-                              textScaleFactor: 1.25,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 1.5),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: const Text(
-                          'Personal Information',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700, fontSize: 17),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    ListTile(
-                      leading: const Icon(Icons.person),
-                      title: const Text(
-                        'Username',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                      subtitle: isEditing
-                          ? TextField(
-                              decoration: const InputDecoration(
-                                  border: InputBorder.none),
-                              controller: _usernameController,
-                              style: const TextStyle(fontSize: 18),
-                            )
-                          : Text(
-                              userData['username'],
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                    ),
-                    const Divider(
-                      color: Colors.black,
-                      indent: 40,
-                      endIndent: 40,
-                      thickness: 0.6,
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.email),
-                      title: const Text(
-                        'Email',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                      subtitle: Text(
-                        userData['email'],
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    const Divider(
-                      color: Colors.black,
-                      indent: 40,
-                      endIndent: 40,
-                      thickness: 0.6,
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.phone_android_outlined),
-                      title: const Text(
-                        'Phone number',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                      subtitle: Text(
-                        userData['phoneNo'],
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    const Divider(
-                      color: Colors.black,
-                      indent: 40,
-                      endIndent: 40,
-                      thickness: 0.6,
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.calendar_month),
-                      title: const Text(
-                        'Date Of Birth',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                      subtitle: GestureDetector(
-                        onTap: isEditing ? () => _selectDate(context) : null,
-                        child: TextFormField(
-                          enabled: false,
-                          decoration: InputDecoration(
-                            hintText: selectedDate != null
-                                ? selectedDate.toString().substring(0, 10)
-                                : 'Select date',
-                            hintStyle: const TextStyle(
-                                fontSize: 18, color: Colors.black),
-                            border: InputBorder.none,
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 70),
+                  Row(
+                    children: [
+                      const SizedBox(width: 30),
+                      Container(
+                        height: 90,
+                        width: 90,
+                        decoration: const BoxDecoration(shape: BoxShape.circle),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: const Icon(
+                            Icons.person,
+                            size: 100,
                           ),
                         ),
                       ),
+                      const SizedBox(width: 30),
+                      Column(
+                        children: [
+                          Text(
+                            userData['name'],
+                            style: const TextStyle(fontWeight: FontWeight.w800),
+                            textScaleFactor: 1.25,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1.5),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: const Text(
+                        'Personal Information',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 17),
+                      ),
                     ),
-                  ],
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: AppText(
-                  text: 'Error${snapshot.error}',
-                ),
-              );
-            } else {
-              return const Center(child: Text('No data available'));
-            }
-          },
-        ),
+                  ),
+                  const SizedBox(height: 30),
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text(
+                      'Username',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    subtitle: isEditing
+                        ? TextField(
+                            decoration:
+                                const InputDecoration(border: InputBorder.none),
+                            controller: _usernameController,
+                            style: const TextStyle(fontSize: 18),
+                          )
+                        : Text(
+                            userData['username'],
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                  ),
+                  const Divider(
+                    color: Colors.black,
+                    indent: 40,
+                    endIndent: 40,
+                    thickness: 0.6,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.email),
+                    title: const Text(
+                      'Email',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    subtitle: Text(
+                      userData['email'],
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  const Divider(
+                    color: Colors.black,
+                    indent: 40,
+                    endIndent: 40,
+                    thickness: 0.6,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.phone_android_outlined),
+                    title: const Text(
+                      'Phone number',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    subtitle: Text(
+                      userData['phoneNo'],
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  const Divider(
+                    color: Colors.black,
+                    indent: 40,
+                    endIndent: 40,
+                    thickness: 0.6,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.calendar_month),
+                    title: const Text(
+                      'Date Of Birth',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    subtitle: GestureDetector(
+                      onTap: isEditing ? () => _selectDate(context) : null,
+                      child: TextFormField(
+                        enabled: false,
+                        decoration: InputDecoration(
+                          hintText: selectedDate != null
+                              ? selectedDate.toString().substring(0, 10)
+                              : 'Select date',
+                          hintStyle: const TextStyle(
+                              fontSize: 18, color: Colors.black),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: AppText(
+                text: 'Error${snapshot.error}',
+              ),
+            );
+          } else {
+            return const Center(child: Text('No data available'));
+          }
+        },
       ),
     );
   }

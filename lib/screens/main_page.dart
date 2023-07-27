@@ -1,4 +1,4 @@
-import 'package:fantasyapp/screens/new_leaderboard.dart';
+import 'package:fantasyapp/screens/chat.dart';
 import 'package:flutter/material.dart';
 
 import 'home_screen.dart';
@@ -18,7 +18,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> screens = const [
     HomeScreen(),
     MyMatches(),
-    Leaderboard(),
+    ChatPage(),
     ProfilePage(),
   ];
 

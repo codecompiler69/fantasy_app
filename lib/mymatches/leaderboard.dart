@@ -38,7 +38,7 @@ class _LeaderboardState extends State<Leaderboard> {
 
         List<dynamic> selectedInfluencers =
             List<dynamic>.from(teamSnapshot['selectedInfluencers']);
-        print('selected: ${selectedInfluencers}');
+        print('selected: $selectedInfluencers');
 
         double totalPoints = 0;
         for (var influencerId in selectedInfluencers) {

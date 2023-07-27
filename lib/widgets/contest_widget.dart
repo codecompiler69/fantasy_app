@@ -29,7 +29,7 @@ class _ConstestWidgetState extends State<ConstestWidget> {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 20),
       child: Container(
-        height: 150,
+        height: 130,
         width: width * 0.95,
         decoration: BoxDecoration(
           border: Border.all(),
