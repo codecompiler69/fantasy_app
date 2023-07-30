@@ -8,7 +8,7 @@ import 'package:fantasyapp/widgets/contest_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../contests/contest_info.dart';
-import '../contests/create_new_contest.dart';
+
 import '../widgets/category_container.dart';
 import '../widgets/wallet_container.dart';
 
@@ -30,6 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
     'Fitness',
     'Politics'
   ];
+
+  Map<String, String> categoryToImage = {
+    'Finance': 'assets/images/finance.jpg',
+    'Gaming': 'assets/images/gaming.webp',
+    'Technology': 'assets/images/tech.jpg',
+  };
 
   int selectedIndex = 0;
   String selectedCategory = 'All';
@@ -101,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-   Future<void> _addMoneyToWallet(int amountToAdd) async {
+  Future<void> _addMoneyToWallet(int amountToAdd) async {
     final user = FirebaseAuth.instance.currentUser!;
     final userData = await FirebaseFirestore.instance
         .collection('users')
@@ -117,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
         .update({'wallet_amount': newAmount});
   }
 
- 
   Future<void> _showAddMoneyDialog() async {
     int amountToAdd = 0;
 
@@ -163,17 +168,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CreateContest(),
-              ),
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
         drawer: const Drawer(),
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 176, 144, 229),
@@ -287,7 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       final contestData = filteredContests[index];
                       final contestId = contestData['id'];
-
+                      final String category = contestData['category'];
+                      final imageFilePath = categoryToImage[category] ??
+                          'assets/images/default.jpg';
                       return InkWell(
                         onTap: () {
                           _checkIfRegistered(
@@ -296,10 +292,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         child: ConstestWidget(
-                          image: const AssetImage('assets/images/finance.jpg'),
+                          contestName: contestData['name'],
+                          image: AssetImage(imageFilePath),
                           prizepool: contestData['prizePool'],
                           entryfees: contestData['entryFee'],
-                          category: contestData['category'],
+                          category: category,
                           contestStatus: contestData['status'],
                         ),
                       );

@@ -88,19 +88,18 @@ class _ContestInfoState extends State<ContestInfo> {
             ),
             Row(
               children: [
-                Expanded(
-                  child: Checkbox(
-                    value: termsAndConditionsAccepted,
-                    onChanged: toggleAcceptance,
-                  ),
+                Checkbox(
+                  value: termsAndConditionsAccepted,
+                  onChanged: toggleAcceptance,
                 ),
-                const Text('I have read and accept the'),
+                const Text('I accept the'),
                 const SizedBox(
                   width: 5,
                 ),
                 const AppText(
                   text: 'Terms and Conditions',
                   color: Colors.blue,
+                  size: 14,
                 ),
                 const AppText(
                   text: '.',
@@ -114,8 +113,8 @@ class _ContestInfoState extends State<ContestInfo> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => InfluencerScreen(
-                              contestData: widget.contestData,
-                              ),
+                            contestData: widget.contestData,
+                          ),
                         ),
                       );
                     }

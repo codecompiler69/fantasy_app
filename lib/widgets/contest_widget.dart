@@ -8,6 +8,7 @@ class ConstestWidget extends StatefulWidget {
   final String entryfees;
   final String category;
   final String contestStatus;
+  final String contestName;
 
   const ConstestWidget({
     Key? key,
@@ -16,6 +17,7 @@ class ConstestWidget extends StatefulWidget {
     required this.entryfees,
     required this.category,
     required this.contestStatus,
+    required this.contestName,
   }) : super(key: key);
 
   @override
@@ -52,6 +54,10 @@ class _ConstestWidgetState extends State<ConstestWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  AppText(
+                    text: widget.contestName,
+                    fontWeight: FontWeight.bold,
+                  ),
                   const SizedBox(
                     height: 5,
                   ),

@@ -12,6 +12,11 @@ class MyMatches extends StatefulWidget {
 }
 
 class _MyMatchesState extends State<MyMatches> {
+  Map<String, String> categoryToImage = {
+    'Finance': 'assets/images/finance.jpg',
+    'Gaming': 'assets/images/gaming.webp',
+    'Technology': 'assets/images/tech.jpg',
+  };
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -50,6 +55,9 @@ class _MyMatchesState extends State<MyMatches> {
                 itemCount: contests.length,
                 itemBuilder: (context, index) {
                   final contestData = contests[index];
+                  final String category = contestData['category'];
+                  final imageFilePath =
+                      categoryToImage[category] ?? 'assets/images/default.jpg';
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -62,7 +70,8 @@ class _MyMatchesState extends State<MyMatches> {
                       );
                     },
                     child: ConstestWidget(
-                      image: const AssetImage('assets/images/finance.jpg'),
+                      contestName: contestData['name'],
+                      image: AssetImage(imageFilePath),
                       prizepool: contestData['prizePool'],
                       entryfees: contestData['entryFee'],
                       category: contestData['category'],
